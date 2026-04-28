@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prediction History – LungAI</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #f8fafc;
+        --surf: #ffffff;
+        --surf2: #f1f5f9;
+        --bdr: #e2e8f0;
+        --bdr2: #cbd5e1;
+        --txt: #0f172a;
+        --txt2: #475569;
+        --txt3: #94a3b8;
+        --blue: #1d4ed8;
+        --blue-l: #eff6ff;
+        --red: #dc2626;
+        --red-l: #fef2f2;
+        --red-b: #fecaca;
+        --ora: #ea580c;
+        --ora-l: #fff7ed;
+        --ora-b: #fed7aa;
+        --grn: #16a34a;
+        --grn-l: #f0fdf4;
+        --grn-b: #bbf7d0;
+        --radius: 12px;
+        --radius-sm: 7px;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0f172a;
+          --surf: #1e293b;
+          --surf2: #0f172a;
+          --bdr: #334155;
+          --bdr2: #475569;
+          --txt: #f1f5f9;
+          --txt2: #94a3b8;
+          --txt3: #64748b;
+          --blue-l: #1e3a5f;
+          --red-l: #450a0a;
+          --red-b: #7f1d1d;
+          --ora-l: #431407;
+          --ora-b: #7c2d12;
+          --grn-l: #052e16;
+          --grn-b: #14532d;
+        }
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--txt);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+        min-height: 100vh;
+      }
+
+      /* ── Nav ── */
+      nav {
+        background: var(--surf);
+        border-bottom: 1px solid var(--bdr);
+        padding: 0 1.5rem;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .nav-brand {
+        font-weight: 600;
+        font-size: 15px;
+        color: var(--blue);
+        letter-spacing: -0.3px;
+      }
+      .nav-links {
+        display: flex;
+        gap: 4px;
+      }
+      .nav-links a {
+        font-size: 13px;
+        color: var(--txt2);
+        text-decoration: none;
+        padding: 5px 10px;
+        border-radius: 6px;
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
+      .nav-links a:hover {
+        background: var(--surf2);
+        color: var(--txt);
+      }
+      .nav-links a.active {
+        background: var(--blue-l);
+        color: var(--blue);
+        font-weight: 500;
+      }
+
+      /* ── Page ── */
+      .page {
+        max-width: 1060px;
+        margin: 0 auto;
+        padding: 1.75rem 1.25rem 3rem;
+      }
+
+      .page-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+      }
+      .page-header h1 {
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: -0.3px;
+      }
+      .page-header p {
+        font-size: 13px;
+        color: var(--txt2);
+        margin-top: 2px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 7px 16px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--bdr2);
+        background: var(--surf);
+        color: var(--txt);
+        cursor: pointer;
+        text-decoration: none;
+        font-family: inherit;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .btn:hover {
+        background: var(--surf2);
+      }
+      .btn.primary {
+        background: var(--blue);
+        color: #fff;
+        border-color: var(--blue);
+      }
+      .btn.primary:hover {
+        background: #1e40af;
+        border-color: #1e40af;
+      }
+      .btn.danger {
+        color: var(--red);
+        border-color: var(--red-b);
+      }
+      .btn.danger:hover {
+        background: var(--red-l);
+      }
+      .btn.sm {
+        font-size: 12px;
+        padding: 5px 12px;
+      }
+
+      /* ── Stats ── */
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 1.5rem;
+      }
+      @media (max-width: 500px) {
+        .stats-row {
+          grid-template-columns: 1fr;
+        }
+      }
+      .stat-card {
+        background: var(--surf);
+        border: 1px solid var(--bdr);
+        border-radius: var(--radius);
+        padding: 14px 18px;
+        box-shadow: var(--shadow);
+      }
+      .stat-card .label {
+        font-size: 11px;
+        color: var(--txt3);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+      }
+      .stat-card .val {
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .stat-card .val.high {
+        color: var(--red);
+      }
+      .stat-card .val.mod {
+        color: var(--ora);
+      }
+      .stat-card .val.low {
+        color: var(--grn);
+      }
+
+      /* ── Prediction card ── */
+      .pred-card {
+        background: var(--surf);
+        border: 1px solid var(--bdr);
+        border-radius: var(--radius);
+        margin-bottom: 14px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .pred-top {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        padding: 16px 18px;
+        align-items: start;
+      }
+      .pred-meta {
+        font-size: 11px;
+        color: var(--txt3);
+        font-weight: 500;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .pred-meta .sep {
+        opacity: 0.4;
+      }
+      .pred-type {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        letter-spacing: -0.2px;
+      }
+
+      .risk-badge {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 9px;
+        border-radius: 20px;
+        letter-spacing: 0.2px;
+        text-transform: uppercase;
+      }
+      .risk-badge.high {
+        background: var(--red-l);
+        color: var(--red);
+        border: 1px solid var(--red-b);
+      }
+      .risk-badge.mod {
+        background: var(--ora-l);
+        color: var(--ora);
+        border: 1px solid var(--ora-b);
+      }
+      .risk-badge.low {
+        background: var(--grn-l);
+        color: var(--grn);
+        border: 1px solid var(--grn-b);
+      }
+
+      .pred-kpis {
+        display: flex;
+        gap: 24px;
+        margin-top: 12px;
+        flex-wrap: wrap;
+      }
+      .kpi-item .kpi-l {
+        font-size: 10px;
+        color: var(--txt3);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        font-weight: 500;
+      }
+      .kpi-item .kpi-v {
+        font-size: 15px;
+        font-weight: 600;
+        margin-top: 1px;
+      }
+
+      /* ── Image strip ── */
+      .img-strip {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-top: 1px solid var(--bdr);
+      }
+      @media (max-width: 480px) {
+        .img-strip {
+          grid-template-columns: 1fr;
+        }
+        .img-slot + .img-slot {
+          border-left: none;
+          border-top: 1px solid var(--bdr);
+        }
+      }
+
+      .img-slot {
+        position: relative;
+        aspect-ratio: 1 / 1;
+        background: #0f172a;
+        overflow: hidden;
+        cursor: zoom-in;
+      }
+      .img-slot + .img-slot {
+        border-left: 1px solid var(--bdr);
+      }
+
+      .img-slot img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.25s ease;
+      }
+      .img-slot:hover img {
+        transform: scale(1.06);
+      }
+
+      /* gradient overlay + label */
+      .img-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 20px 8px 6px;
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.78) 0%,
+          transparent 100%
+        );
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 4px;
+        pointer-events: none;
+      }
+      .img-overlay-name {
+        font-size: 10px;
+        font-weight: 600;
+        color: #fff;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+      .img-overlay-pill {
+        font-size: 9px;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 999px;
+        color: #fff;
+        white-space: nowrap;
+      }
+      .pill-orig {
+        background: rgba(255, 255, 255, 0.22);
+      }
+      .pill-det {
+        background: rgba(220, 38, 38, 0.85);
+      }
+      .pill-sub {
+        background: rgba(37, 99, 235, 0.85);
+      }
+
+      /* top tag badge */
+      .img-tag {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        padding: 2px 7px;
+        border-radius: 4px;
+        pointer-events: none;
+      }
+      .tag-orig {
+        background: rgba(255, 255, 255, 0.12);
+        color: #e2e8f0;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+      }
+      .tag-det {
+        background: rgba(239, 68, 68, 0.2);
+        color: #fca5a5;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+      }
+      .tag-sub {
+        background: rgba(59, 130, 246, 0.2);
+        color: #93c5fd;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+      }
+
+      .img-slot.missing {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--surf2);
+        cursor: default;
+      }
+      .img-slot.missing span {
+        font-size: 11px;
+        color: var(--txt3);
+        text-align: center;
+        padding: 8px;
+      }
+
+      /* ── Lightbox ── */
+      .lightbox {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.88);
+        z-index: 100;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+      .lightbox.open {
+        display: flex;
+      }
+      .lightbox img {
+        max-width: 90vw;
+        max-height: 88vh;
+        border-radius: 8px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      }
+      .lightbox-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: rgba(255, 255, 255, 0.12);
+        border: none;
+        color: #fff;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 18px;
+        line-height: 36px;
+        text-align: center;
+        transition: background 0.15s;
+      }
+      .lightbox-close:hover {
+        background: rgba(255, 255, 255, 0.22);
+      }
+      .lightbox-caption {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 12px;
+        text-align: center;
+        pointer-events: none;
+        background: rgba(0, 0, 0, 0.35);
+        padding: 3px 12px;
+        border-radius: 999px;
+      }
+
+      /* ── Card footer ── */
+      .pred-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 18px;
+        border-top: 1px solid var(--bdr);
+        background: var(--surf2);
+        flex-wrap: wrap;
+      }
+      .suggestions {
+        font-size: 11.5px;
+        color: var(--txt2);
+        flex: 1;
+        min-width: 0;
+      }
+      .suggestions strong {
+        color: var(--txt);
+        font-weight: 500;
+      }
+      .footer-actions {
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+
+      /* ── Empty ── */
+      .empty {
+        text-align: center;
+        padding: 4rem 1rem;
+        color: var(--txt3);
+      }
+      .empty svg {
+        margin-bottom: 14px;
+        opacity: 0.35;
+      }
+      .empty p {
+        font-size: 14px;
+        margin-bottom: 16px;
+      }
+
+      /* ── Flash ── */
+      .flash {
+        padding: 10px 16px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        margin-bottom: 14px;
+        border: 1px solid var(--bdr);
+        background: var(--surf);
+      }
+
+      /* ── Clinical chips ── */
+      .clinical-chips {
+        display: flex;
+        gap: 6px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+      }
+      .chip {
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 20px;
+        background: var(--surf2);
+        border: 1px solid var(--bdr);
+        color: var(--txt2);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Nav -->
+    <nav>
+      <div class="nav-brand">🫁 LungAI</div>
+      <div class="nav-links">
+        <a href="/home">Home</a>
+        <a href="/prediction">New scan</a>
+        <a href="/history" class="active">History</a>
+        <a href="/logout">Logout</a>
+      </div>
+    </nav>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+      <button
+        class="lightbox-close"
+        onclick="document.getElementById('lightbox').classList.remove('open')"
+      >
+        ✕
+      </button>
+      <img id="lb-img" src="" alt="Enlarged scan" />
+      <div class="lightbox-caption" id="lb-cap"></div>
+    </div>
+
+    <div class="page">
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages() %} {% if messages %} {% for msg
+      in messages %}
+      <div class="flash">{{ msg }}</div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <!-- Header -->
+      <div class="page-header">
+        <div>
+          <h1>Prediction history</h1>
+          <p>
+            Logged in as <strong>{{ username }}</strong> &middot; {{
+            records|length }} record{{ 's' if records|length != 1 else '' }}
+          </p>
+        </div>
+        <a href="{{ url_for('prediction') }}" class="btn primary"
+          >+ New prediction</a
+        >
+      </div>
+
+      <!-- Stats -->
+      {% if records %}
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="label">High risk</div>
+          <div class="val high">{{ high_count }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Moderate risk</div>
+          <div class="val mod">{{ mod_count }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Low risk</div>
+          <div class="val low">{{ low_count }}</div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- ═══════════════════════════════════════════════════
+           RECORDS
+           ═══════════════════════════════════════════════════ -->
+      {% if records %} {% for r in records %} {# ── Risk class ── #} {% set
+      risk_raw = (r.final_risk or 'unknown') | lower %} {% if 'high' in risk_raw
+      %} {% set risk_cls = 'high' %} {% set risk_label = 'High risk' %} {% elif
+      'mod' in risk_raw %} {% set risk_cls = 'mod' %} {% set risk_label =
+      'Moderate risk' %} {% else %} {% set risk_cls = 'low' %} {% set risk_label
+      = 'Low risk' %} {% endif %} {% set cd = r.clinical_data or {} %} {# ──
+      Per-panel image fallback chain ── #} {% set orig_src = r.original_url or
+      r.gradcam_binary_url or r.gradcam_type_url or r.gradcam_url or '' %} {%
+      set binary_src = r.gradcam_binary_url or r.gradcam_url or r.original_url
+      or '' %} {% set type_src = r.gradcam_type_url or r.gradcam_url or
+      r.gradcam_binary_url or r.original_url or '' %} {# ── Subtype label (FIX:
+      avoids backslash-quote in onclick) ── #} {% set type_label = r.cancer_type
+      if r.cancer_type and r.cancer_type != 'N/A' else 'Subtype' %}
+
+      <div class="pred-card">
+        <!-- Top info -->
+        <div class="pred-top">
+          <div>
+            <div class="pred-meta">
+              <span>{{ r.timestamp }}</span>
+              <span class="sep">&middot;</span>
+              <span>ID: {{ r.prediction_id }}</span>
+            </div>
+            <div class="pred-type">{{ r.cancer_type or 'N/A' }}</div>
+            <span class="risk-badge {{ risk_cls }}">{{ risk_label }}</span>
+
+            <div class="pred-kpis">
+              <div class="kpi-item">
+                <div class="kpi-l">Survival</div>
+                <div class="kpi-v">{{ r.survival }}%</div>
+              </div>
+              <div class="kpi-item">
+                <div class="kpi-l">Confidence</div>
+                <div class="kpi-v">{{ r.confidence }}%</div>
+              </div>
+              {% if cd.stage %}
+              <div class="kpi-item">
+                <div class="kpi-l">Stage</div>
+                <div class="kpi-v">{{ cd.stage }}</div>
+              </div>
+              {% endif %} {% if cd.age %}
+              <div class="kpi-item">
+                <div class="kpi-l">Age</div>
+                <div class="kpi-v">{{ cd.age }}</div>
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="clinical-chips">
+              {% if cd.smoking %}
+              <span class="chip">Smoking: {{ cd.smoking }}</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <!-- /pred-top -->
+
+        <!-- ── Image strip: Original | Binary Grad-CAM | Type Grad-CAM ── -->
+        <div class="img-strip">
+          <!-- Slot 1 · Original CT -->
+          {% if orig_src %}
+          <div
+            class="img-slot"
+            onclick="openLightbox('{{ orig_src }}', 'Original CT scan – {{ r.prediction_id }}')"
+          >
+            <img
+              src="{{ orig_src }}"
+              alt="Original CT"
+              loading="lazy"
+              onerror="slotErr(this)"
+            />
+            <span class="img-tag tag-orig">Original</span>
+            <div class="img-overlay">
+              <span class="img-overlay-name">CT Scan</span>
+              <span class="img-overlay-pill pill-orig">Input</span>
+            </div>
+          </div>
+          {% else %}
+          <div class="img-slot missing">
+            <span>Original CT<br />not available</span>
+          </div>
+          {% endif %}
+
+          <!-- Slot 2 · Cancer Detection (binary Grad-CAM) -->
+          {% if binary_src %}
+          <div
+            class="img-slot"
+            onclick="openLightbox('{{ binary_src }}', 'Cancer detection Grad-CAM – {{ r.confidence }}% confidence')"
+          >
+            <img
+              src="{{ binary_src }}"
+              alt="Cancer detection Grad-CAM"
+              loading="lazy"
+              onerror="slotErr(this)"
+            />
+            <span class="img-tag tag-det">Detection</span>
+            <div class="img-overlay">
+              <span class="img-overlay-name">Binary model</span>
+              <span class="img-overlay-pill pill-det">{{ r.confidence }}%</span>
+            </div>
+          </div>
+          {% else %}
+          <div class="img-slot missing">
+            <span>Detection map<br />not available</span>
+          </div>
+          {% endif %}
+
+          <!-- Slot 3 · Cancer Subtype (type Grad-CAM) — FIXED -->
+          {% if type_src %}
+          <div
+            class="img-slot"
+            onclick="openLightbox('{{ type_src }}', '{{ type_label }} Grad-CAM')"
+          >
+            <img
+              src="{{ type_src }}"
+              alt="Subtype Grad-CAM"
+              loading="lazy"
+              onerror="slotErr(this)"
+            />
+            <span class="img-tag tag-sub">Subtype</span>
+            <div class="img-overlay">
+              <span class="img-overlay-name">{{ type_label }}</span>
+              <span class="img-overlay-pill pill-sub">{{ r.confidence }}%</span>
+            </div>
+          </div>
+          {% else %}
+          <div class="img-slot missing">
+            <span>Subtype map<br />not available</span>
+          </div>
+          {% endif %}
+        </div>
+        <!-- /.img-strip -->
+
+        <!-- Footer -->
+        <div class="pred-footer">
+          <div class="suggestions">
+            {% if r.suggestions %}
+            <strong>Suggestions:</strong> {{ r.suggestions | join(' &middot; ')
+            }} {% endif %}
+          </div>
+          <div class="footer-actions">
+            <a
+              href="{{ url_for('download_report', prediction_id=r.prediction_id) }}"
+              class="btn primary sm"
+              >&#8595; Report</a
+            >
+            <form
+              method="POST"
+              action="{{ url_for('delete_prediction', prediction_id=r.prediction_id) }}"
+              style="margin: 0"
+              onsubmit="return confirm('Delete this prediction?');"
+            >
+              <button type="submit" class="btn danger sm">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- /.pred-card -->
+
+      {% endfor %} {% else %}
+
+      <div class="empty">
+        <svg
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
+          <path
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0121 9.414V19a2 2 0 01-2 2z"
+          />
+        </svg>
+        <p>No predictions yet. Upload a CT scan to get started.</p>
+        <a href="{{ url_for('prediction') }}" class="btn primary"
+          >Start first prediction</a
+        >
+      </div>
+
+      {% endif %}
+    </div>
+    <!-- /.page -->
+
+    <script>
+      function openLightbox(src, caption) {
+        document.getElementById("lb-img").src = src;
+        document.getElementById("lb-cap").textContent = caption;
+        document.getElementById("lightbox").classList.add("open");
+      }
+      function closeLightbox(e) {
+        if (e.target === document.getElementById("lightbox"))
+          document.getElementById("lightbox").classList.remove("open");
+      }
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape")
+          document.getElementById("lightbox").classList.remove("open");
+      });
+
+      /* replace broken image slot with a "missing" placeholder */
+      function slotErr(img) {
+        const slot = img.closest(".img-slot");
+        if (!slot) return;
+        slot.classList.add("missing");
+        slot.onclick = null;
+        slot.innerHTML = "<span>Image<br>unavailable</span>";
+      }
+    </script>
+  </body>
+</html>

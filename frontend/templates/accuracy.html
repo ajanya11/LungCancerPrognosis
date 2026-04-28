@@ -1,0 +1,683 @@
+{% extends "base.html" %} {% block title %}System Performance — Lung Cancer
+Prognosis{% endblock %} {% block content %}
+
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap");
+
+  :root {
+    --ink: #0b1120;
+    --ink2: #1e2d45;
+    --muted: #5c7a99;
+    --border: rgba(92, 122, 153, 0.18);
+    --surface: rgba(255, 255, 255, 0.6);
+    --glass: rgba(255, 255, 255, 0.45);
+    --teal: #0d9488;
+    --teal-lt: #ccfbf1;
+    --blue: #1d6fa4;
+    --blue-lt: #dbeafe;
+    --amber: #b45309;
+    --amber-lt: #fef3c7;
+    --red: #be123c;
+    --red-lt: #ffe4e6;
+    --green: #15803d;
+    --green-lt: #dcfce7;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: "DM Sans", sans-serif;
+    color: var(--ink);
+    background: #f0f6ff;
+    min-height: 100vh;
+  }
+
+  .acc-page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+  }
+
+  /* ── Hero ── */
+  .acc-hero {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+  .acc-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "DM Mono", monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal);
+    background: var(--teal-lt);
+    border: 1px solid rgba(13, 148, 136, 0.2);
+    padding: 5px 14px;
+    border-radius: 999px;
+    margin-bottom: 22px;
+  }
+  .acc-eyebrow::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.4;
+      transform: scale(0.7);
+    }
+  }
+
+  .acc-title {
+    font-family: "DM Serif Display", serif;
+    font-size: clamp(32px, 5vw, 52px);
+    line-height: 1.12;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .acc-title em {
+    font-style: italic;
+    color: var(--teal);
+  }
+
+  .acc-subtitle {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* ── Section label ── */
+  .section-label {
+    font-family: "DM Mono", monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  /* ── Model cards grid ── */
+  .model-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 56px;
+  }
+  @media (max-width: 768px) {
+    .model-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 480px) {
+    .model-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .model-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 20px 20px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    transition:
+      transform 0.2s,
+      box-shadow 0.2s;
+  }
+  .model-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(11, 17, 32, 0.08);
+  }
+  .model-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 16px 16px 0 0;
+  }
+  .model-card.ct::before {
+    background: linear-gradient(90deg, #0d9488, #0891b2);
+  }
+  .model-card.clin::before {
+    background: linear-gradient(90deg, #1d6fa4, #6366f1);
+  }
+  .model-card.gen::before {
+    background: linear-gradient(90deg, #b45309, #d97706);
+  }
+  .model-card.fuse::before {
+    background: linear-gradient(90deg, #15803d, #0d9488);
+  }
+
+  .model-card.fuse {
+    border-color: rgba(21, 128, 61, 0.25);
+    background: rgba(220, 252, 231, 0.35);
+  }
+
+  .mc-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+  .ct .mc-icon {
+    background: var(--teal-lt);
+    color: var(--teal);
+  }
+  .clin .mc-icon {
+    background: var(--blue-lt);
+    color: var(--blue);
+  }
+  .gen .mc-icon {
+    background: var(--amber-lt);
+    color: var(--amber);
+  }
+  .fuse .mc-icon {
+    background: var(--green-lt);
+    color: var(--green);
+  }
+
+  .mc-name {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .mc-perf {
+    font-family: "DM Serif Display", serif;
+    font-size: 22px;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .ct .mc-perf {
+    color: var(--teal);
+  }
+  .clin .mc-perf {
+    color: var(--blue);
+  }
+  .gen .mc-perf {
+    color: var(--amber);
+  }
+  .fuse .mc-perf {
+    color: var(--green);
+  }
+
+  .mc-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .mc-badge {
+    display: inline-block;
+    margin-top: 12px;
+    font-family: "DM Mono", monospace;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 999px;
+  }
+  .ct .mc-badge {
+    background: var(--teal-lt);
+    color: var(--teal);
+  }
+  .clin .mc-badge {
+    background: var(--blue-lt);
+    color: var(--blue);
+  }
+  .gen .mc-badge {
+    background: var(--amber-lt);
+    color: var(--amber);
+  }
+  .fuse .mc-badge {
+    background: var(--green-lt);
+    color: var(--green);
+  }
+
+  /* ── Pipeline flow ── */
+  .pipeline-wrap {
+    background: var(--ink);
+    border-radius: 20px;
+    padding: 40px 36px;
+    margin-bottom: 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pipeline-wrap::after {
+    content: "";
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(13, 148, 136, 0.15) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+  .pipeline-label {
+    font-family: "DM Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.35);
+    margin-bottom: 28px;
+  }
+  .pipeline-flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .pf-step {
+    flex: 1;
+    min-width: 120px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 16px 14px;
+  }
+  .pf-step-num {
+    font-family: "DM Mono", monospace;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 6px;
+  }
+  .pf-step-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .pf-step-sub {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.4;
+  }
+  .pf-arrow {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.2);
+    flex-shrink: 0;
+    padding: 0 2px;
+  }
+  .pf-step.highlight {
+    background: rgba(13, 148, 136, 0.2);
+    border-color: rgba(13, 148, 136, 0.4);
+  }
+  .pf-step.highlight .pf-step-name {
+    color: #5eead4;
+  }
+
+  /* ── Capabilities ── */
+  .caps-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 56px;
+  }
+  @media (max-width: 600px) {
+    .caps-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .cap-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    backdrop-filter: blur(8px);
+    transition:
+      transform 0.18s,
+      box-shadow 0.18s;
+  }
+  .cap-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(11, 17, 32, 0.06);
+  }
+  .cap-icon {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--teal-lt);
+    color: var(--teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .cap-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .cap-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* ── Stats bar ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 56px;
+  }
+  @media (max-width: 560px) {
+    .stats-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .stat-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: center;
+    backdrop-filter: blur(8px);
+  }
+  .stat-num {
+    font-family: "DM Serif Display", serif;
+    font-size: 44px;
+    line-height: 1;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .stat-num span {
+    color: var(--teal);
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Disclaimer ── */
+  .disclaimer {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 14px;
+    padding: 20px 24px;
+  }
+  .disclaimer i {
+    color: #d97706;
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .disclaimer strong {
+    font-size: 13px;
+    color: #92400e;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .disclaimer p {
+    font-size: 12.5px;
+    color: #78350f;
+    line-height: 1.6;
+  }
+
+  /* ── Entrance animation ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: fadeUp 0.55s ease forwards;
+  }
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .delay-1 {
+    animation-delay: 0.08s;
+  }
+  .delay-2 {
+    animation-delay: 0.16s;
+  }
+  .delay-3 {
+    animation-delay: 0.24s;
+  }
+  .delay-4 {
+    animation-delay: 0.32s;
+  }
+  .delay-5 {
+    animation-delay: 0.4s;
+  }
+  .delay-6 {
+    animation-delay: 0.48s;
+  }
+</style>
+
+<div class="acc-page">
+  <!-- Hero -->
+  <div class="acc-hero fade-up">
+    <div class="acc-eyebrow">System Performance</div>
+    <h1 class="acc-title">Multimodal <em>Lung Cancer</em> Evaluation</h1>
+    <p class="acc-subtitle">
+      CT imaging, clinical parameters, and genomic features fused into a single
+      deep-learning pipeline for comprehensive lung cancer prognosis.
+    </p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row fade-up delay-1">
+    <div class="stat-block">
+      <div class="stat-num">4<span>×</span></div>
+      <div class="stat-label">Input modalities fused</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num"><span>3</span></div>
+      <div class="stat-label">Risk tiers classified</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num">4<span>+</span></div>
+      <div class="stat-label">Cancer subtypes detected</div>
+    </div>
+  </div>
+
+  <!-- Model cards -->
+  <p class="section-label fade-up delay-2">Individual models</p>
+  <div class="model-grid fade-up delay-2">
+    <div class="model-card ct">
+      <div class="mc-icon"><i class="fas fa-lungs"></i></div>
+      <div class="mc-name">CT Model</div>
+      <div class="mc-perf">High Accuracy</div>
+      <div class="mc-desc">
+        ResNet50 backbone with GradCAM explainability. Detects cancer type from
+        imaging.
+      </div>
+      <span class="mc-badge">ResNet-50</span>
+    </div>
+
+    <div class="model-card clin">
+      <div class="mc-icon"><i class="fas fa-user-md"></i></div>
+      <div class="mc-name">Clinical Model</div>
+      <div class="mc-perf">Risk Scoring</div>
+      <div class="mc-desc">
+        Age, stage, and smoking history weighted into a clinical risk score.
+      </div>
+      <span class="mc-badge">MLP</span>
+    </div>
+
+    <div class="model-card gen">
+      <div class="mc-icon"><i class="fas fa-dna"></i></div>
+      <div class="mc-name">Genomic Model</div>
+      <div class="mc-perf">Feature-Based</div>
+      <div class="mc-desc">
+        VAE representation of microarray gene expression data as optional
+        signal.
+      </div>
+      <span class="mc-badge">VAE</span>
+    </div>
+
+    <div class="model-card fuse">
+      <div class="mc-icon"><i class="fas fa-star"></i></div>
+      <div class="mc-name">Fusion Model</div>
+      <div class="mc-perf">Best Result</div>
+      <div class="mc-desc">
+        Weighted combination of all modalities for the most reliable prognosis.
+      </div>
+      <span class="mc-badge">Multimodal</span>
+    </div>
+  </div>
+
+  <!-- Pipeline -->
+  <p class="section-label fade-up delay-3">Inference pipeline</p>
+  <div class="pipeline-wrap fade-up delay-3">
+    <div class="pipeline-label">End-to-end prediction flow</div>
+    <div class="pipeline-flow">
+      <div class="pf-step">
+        <div class="pf-step-num">01</div>
+        <div class="pf-step-name">CT Scan Upload</div>
+        <div class="pf-step-sub">PNG / JPG / DICOM validated</div>
+      </div>
+      <div class="pf-arrow">›</div>
+      <div class="pf-step">
+        <div class="pf-step-num">02</div>
+        <div class="pf-step-name">CT Inference</div>
+        <div class="pf-step-sub">ResNet50 — type + binary model</div>
+      </div>
+      <div class="pf-arrow">›</div>
+      <div class="pf-step">
+        <div class="pf-step-num">03</div>
+        <div class="pf-step-name">GradCAM</div>
+        <div class="pf-step-sub">Heatmap overlay saved per user</div>
+      </div>
+      <div class="pf-arrow">›</div>
+      <div class="pf-step">
+        <div class="pf-step-num">04</div>
+        <div class="pf-step-name">Clinical Scoring</div>
+        <div class="pf-step-sub">Age, stage, smoking risk</div>
+      </div>
+      <div class="pf-arrow">›</div>
+      <div class="pf-step highlight">
+        <div class="pf-step-num">05</div>
+        <div class="pf-step-name">Fusion Output</div>
+        <div class="pf-step-sub">Risk · Survival · Confidence</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Capabilities -->
+  <p class="section-label fade-up delay-4">What the system provides</p>
+  <div class="caps-grid fade-up delay-4">
+    <div class="cap-item">
+      <div class="cap-icon"><i class="fas fa-microscope"></i></div>
+      <div>
+        <div class="cap-title">Cancer type classification</div>
+        <div class="cap-desc">
+          Adenocarcinoma, Large Cell, Squamous Cell, or Normal — from CT imaging
+          alone.
+        </div>
+      </div>
+    </div>
+    <div class="cap-item">
+      <div class="cap-icon"><i class="fas fa-heartbeat"></i></div>
+      <div>
+        <div class="cap-title">Survival probability</div>
+        <div class="cap-desc">
+          Estimated survival chance fused from CT score, clinical risk, and
+          optional genomic weight.
+        </div>
+      </div>
+    </div>
+    <div class="cap-item">
+      <div class="cap-icon"><i class="fas fa-shield-alt"></i></div>
+      <div>
+        <div class="cap-title">Risk tier assignment</div>
+        <div class="cap-desc">
+          Low · Medium · High risk categorisation with a calibrated fusion
+          score.
+        </div>
+      </div>
+    </div>
+    <div class="cap-item">
+      <div class="cap-icon"><i class="fas fa-fire-alt"></i></div>
+      <div>
+        <div class="cap-title">Grad-CAM heatmaps</div>
+        <div class="cap-desc">
+          Binary and subtype activation maps per logged-in user — visible for
+          all predictions including Normal.
+        </div>
+      </div>
+    </div>
+    <div class="cap-item">
+      <div class="cap-icon"><i class="fas fa-file-medical-alt"></i></div>
+      <div>
+        <div class="cap-title">Downloadable PDF report</div>
+        <div class="cap-desc">
+          Full prognosis report with embedded GradCAM panels, clinical summary,
+          and suggestions.
+        </div>
+      </div>
+    </div>
+    <div class="cap-item">
+      <div class="cap-icon"><i class="fas fa-lightbulb"></i></div>
+      <div>
+        <div class="cap-title">Clinical suggestions</div>
+        <div class="cap-desc">
+          Actionable next steps tailored to the predicted cancer type and risk
+          level.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer fade-up delay-6">
+    <i class="fas fa-exclamation-triangle"></i>
+    <div>
+      <strong>Research use only</strong>
+      <p>
+        This system is developed for research and educational purposes. It has
+        not been clinically validated and must not be used as a substitute for
+        professional medical diagnosis or treatment. Always consult a qualified
+        oncologist for medical decisions.
+      </p>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

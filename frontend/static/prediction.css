@@ -1,0 +1,423 @@
+/* --- VARIABLES & BASE --- */
+:root {
+  --primary-bg: #f4f7f6;
+  --dark-blue: #0a192f;
+  --light-blue: #112240;
+  --accent-blue: #2563eb;
+  --accent-teal: #0d9488;
+  --text-main: #334155;
+  --text-muted: #64748b;
+  --white: #ffffff;
+
+  /* Risk Colors */
+  --risk-high-bg: #fef2f2;
+  --risk-high-text: #dc2626;
+  --risk-high-border: #fca5a5;
+
+  --risk-mod-bg: #fffbeb;
+  --risk-mod-text: #d97706;
+  --risk-mod-border: #fcd34d;
+
+  --risk-low-bg: #f0fdf4;
+  --risk-low-text: #16a34a;
+  --risk-low-border: #86efac;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: "Inter", sans-serif;
+  background-color: var(--primary-bg);
+  color: var(--text-main);
+}
+
+/* --- NAVBAR (Same as Home) --- */
+.navbar {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 1rem 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav-brand {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--dark-blue);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.nav-icon {
+  color: var(--accent-blue);
+  font-size: 1.8rem;
+}
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-main);
+  font-weight: 500;
+}
+.nav-links a.active,
+.nav-links a:hover {
+  color: var(--accent-blue);
+}
+.btn-logout {
+  background: #fee2e2;
+  color: #dc2626 !important;
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+}
+
+/* --- HEADER --- */
+.page-header {
+  text-align: center;
+  padding: 3rem 1rem 2rem;
+  background: linear-gradient(135deg, #e0e8f0 0%, #f4f7f6 100%);
+}
+.page-header h1 {
+  font-family: "Poppins", sans-serif;
+  color: var(--dark-blue);
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+.page-header p {
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* --- LAYOUT GRID --- */
+.prediction-layout {
+  max-width: 1200px;
+  margin: 2rem auto 4rem;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* --- CARDS --- */
+.card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+.panel-title {
+  font-family: "Poppins", sans-serif;
+  color: var(--dark-blue);
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* --- FORM STYLING --- */
+.form-section {
+  margin-bottom: 2rem;
+}
+.section-title {
+  font-size: 1.1rem;
+  color: var(--text-main);
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Drag & Drop File Upload Zones */
+.file-upload-zone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+  text-align: center;
+  position: relative;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.file-upload-zone:hover {
+  border-color: var(--accent-blue);
+  background: #f1f5f9;
+}
+.file-upload-zone input[type="file"] {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.file-upload-zone label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 1rem;
+  pointer-events: none;
+}
+.upload-icon {
+  font-size: 2.5rem;
+  color: var(--accent-blue);
+  margin-bottom: 1rem;
+}
+.upload-text {
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+}
+.upload-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Image Preview */
+#ct-preview {
+  width: 100%;
+  max-height: 250px;
+  object-fit: contain;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+/* Small File Upload Zone (Genomic) */
+.small-zone label {
+  padding: 1.5rem 1rem;
+  flex-direction: row;
+  justify-content: center;
+  gap: 1rem;
+}
+.small-zone i {
+  font-size: 1.5rem;
+  color: var(--accent-teal);
+  margin: 0;
+}
+
+/* Inputs & Selects */
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.input-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+.input-group input,
+.input-group select {
+  padding: 0.8rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+  background: white;
+}
+.input-group input:focus,
+.input-group select:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Submit Button */
+.btn-predict {
+  width: 100%;
+  padding: 1.2rem;
+  background: linear-gradient(135deg, var(--accent-blue), var(--dark-blue));
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.btn-predict:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+}
+
+/* --- LEGEND & RESULTS (RIGHT PANEL) --- */
+.legend-desc {
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.risk-tier {
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  border-left: 5px solid;
+  transition: transform 0.3s ease;
+}
+.risk-tier:hover {
+  transform: translateX(5px);
+}
+.tier-header {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.risk-tier p {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-main);
+}
+
+.tier-high {
+  background: var(--risk-high-bg);
+  border-color: var(--risk-high-text);
+}
+.tier-high .tier-header {
+  color: var(--risk-high-text);
+}
+.tier-mod {
+  background: var(--risk-mod-bg);
+  border-color: var(--risk-mod-text);
+}
+.tier-mod .tier-header {
+  color: var(--risk-mod-text);
+}
+.tier-low {
+  background: var(--risk-low-bg);
+  border-color: var(--risk-low-text);
+}
+.tier-low .tier-header {
+  color: var(--risk-low-text);
+}
+
+/* --- DYNAMIC RESULT DISPLAY STYLES --- */
+.risk-badge {
+  text-align: center;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+.risk-badge h3 {
+  font-family: "Poppins";
+  font-size: 2rem;
+  margin: 0;
+}
+.high-risk {
+  background: var(--risk-high-bg);
+  color: var(--risk-high-text);
+  border: 2px solid var(--risk-high-border);
+}
+.moderate-risk {
+  background: var(--risk-mod-bg);
+  color: var(--risk-mod-text);
+  border: 2px solid var(--risk-mod-border);
+}
+.low-risk {
+  background: var(--risk-low-bg);
+  color: var(--risk-low-text);
+  border: 2px solid var(--risk-low-border);
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.metric {
+  background: #f8fafc;
+  padding: 1.5rem 1rem;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+}
+.metric span {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+.metric strong {
+  font-size: 1.5rem;
+  color: var(--dark-blue);
+  font-family: "Poppins";
+}
+
+.fusion-score {
+  background: var(--dark-blue);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 1.2rem;
+}
+.fusion-score strong {
+  color: var(--accent-teal);
+  font-size: 1.5rem;
+  font-family: "Poppins";
+  display: block;
+  margin-top: 0.5rem;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 900px) {
+  .prediction-layout {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .input-grid {
+    grid-template-columns: 1fr;
+  }
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.result-box {
+  background: #f5f7fa;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+}
+
+.gradcam-img {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.suggestions ul {
+  padding-left: 20px;
+}

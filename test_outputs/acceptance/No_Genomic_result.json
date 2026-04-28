@@ -1,0 +1,25 @@
+{
+    "risk_level": "High Risk",
+    "cancer_type": "Normal",
+    "survival_chance": 25.04,
+    "model_confidence": 78.62,
+    "fusion_score": 74.96,
+    "gradcam": "gradcam/gradcam_user_type.jpg",
+    "gradcam_binary": "gradcam/gradcam_user_binary.jpg",
+    "gradcam_type": "gradcam/gradcam_user_type.jpg",
+    "suggestions": [
+        "No cancer detected \u2014 lungs appear normal",
+        "Routine follow-up screening recommended",
+        "Maintain a healthy, smoke-free lifestyle",
+        "GradCAM shows regions the model focused on to confirm normality"
+    ],
+    "breakdown": {
+        "ct_cancer_prob": 99.93,
+        "ct_type_conf": 60.83,
+        "clinical_score": 50.0,
+        "genomic_score": 0.0,
+        "age": 55,
+        "stage": "II",
+        "smoking": "No"
+    }
+}

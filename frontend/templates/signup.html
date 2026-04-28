@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Sign Up | Lung Cancer Prognosis</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <!-- LEFT PANEL -->
+      <div class="left-panel">
+        <div class="left-content">
+          <h2>Lung Cancer Prognosis System</h2>
+          <p>
+            Create your account to access<br />AI-based prognosis prediction.
+          </p>
+          <img
+            src="{{ url_for('static', filename='doctor.png') }}"
+            alt="Doctors"
+          />
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="right-panel">
+        <div class="form-box">
+          <h2>SIGN UP</h2>
+
+          <form method="POST">
+            <label>Username</label>
+            <input type="text" name="username" required />
+
+            <label>Email</label>
+            <input type="email" name="email" required />
+
+            <label>Password</label>
+            <input type="password" name="password" required />
+
+            <!-- TERMS -->
+            <div style="margin-top: 15px">
+              <input type="checkbox" name="terms" required />
+              <label>
+                I agree to the
+                <a href="{{ url_for('terms') }}" target="_blank">
+                  Terms and Conditions
+                </a>
+              </label>
+            </div>
+
+            <button type="submit">Create Account</button>
+          </form>
+
+          <p class="bottom-text">
+            Already have an account?
+            <a href="{{ url_for('login') }}">Login</a>
+          </p>
+
+          {% with messages = get_flashed_messages() %} {% if messages %}
+          <p class="error">{{ messages[0] }}</p>
+          {% endif %} {% endwith %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

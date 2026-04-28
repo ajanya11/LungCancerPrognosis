@@ -1,0 +1,26 @@
+{
+    "risk_level": "High Risk",
+    "cancer_type": "Large Cell Carcinoma",
+    "survival_chance": 11.51,
+    "model_confidence": 99.94,
+    "fusion_score": 88.49,
+    "gradcam": "gradcam/gradcam_user_type.jpg",
+    "gradcam_binary": "gradcam/gradcam_user_binary.jpg",
+    "gradcam_type": "gradcam/gradcam_user_type.jpg",
+    "suggestions": [
+        "Detected: Large Cell Carcinoma",
+        "Consult oncologist immediately",
+        "Histopathological biopsy recommended",
+        "Consider PET/CT for staging",
+        "Begin treatment planning"
+    ],
+    "breakdown": {
+        "ct_cancer_prob": 99.99,
+        "ct_type_conf": 99.89,
+        "clinical_score": 95.0,
+        "genomic_score": 0.0,
+        "age": 65,
+        "stage": "IV",
+        "smoking": "Yes"
+    }
+}

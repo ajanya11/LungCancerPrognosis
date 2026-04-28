@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>System Info | Lung Cancer Prognosis AI</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='prediction.css') }}"
+    />
+
+    <style>
+      .info-wrap {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+      }
+
+      .info-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 28px 30px;
+      }
+
+      .info-card h2 {
+        font-family: "Poppins", sans-serif;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid #f1f5f9;
+      }
+
+      .info-card h2 i {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+      }
+
+      .i-blue {
+        background: #eff6ff;
+        color: #3b82f6;
+      }
+      .i-purple {
+        background: #f5f3ff;
+        color: #7c3aed;
+      }
+      .i-teal {
+        background: #f0fdfa;
+        color: #0d9488;
+      }
+      .i-green {
+        background: #f0fdf4;
+        color: #16a34a;
+      }
+      .i-amber {
+        background: #fffbeb;
+        color: #d97706;
+      }
+      .i-red {
+        background: #fef2f2;
+        color: #dc2626;
+      }
+
+      /* Pipeline steps */
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .step {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 16px 14px;
+        text-align: center;
+      }
+
+      .step-num {
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #94a3b8;
+        margin-bottom: 8px;
+      }
+
+      .step-ico {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        margin: 0 auto 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+      }
+
+      .step h4 {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 4px;
+      }
+
+      .step p {
+        font-size: 0.72rem;
+        color: #64748b;
+        line-height: 1.5;
+      }
+
+      /* Weights */
+      .weights {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .wbox {
+        border-radius: 10px;
+        padding: 20px 16px;
+        text-align: center;
+        border: 1px solid;
+      }
+
+      .wb-blue {
+        background: #eff6ff;
+        border-color: #bfdbfe;
+      }
+      .wb-green {
+        background: #f0fdf4;
+        border-color: #bbf7d0;
+      }
+      .wb-purple {
+        background: #f5f3ff;
+        border-color: #ddd6fe;
+      }
+
+      .wbox .pct {
+        font-family: "Poppins", sans-serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 6px;
+      }
+
+      .wb-blue .pct {
+        color: #3b82f6;
+      }
+      .wb-green .pct {
+        color: #16a34a;
+      }
+      .wb-purple .pct {
+        color: #7c3aed;
+      }
+
+      .wbox .wname {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 4px;
+      }
+
+      .wbox .wsub {
+        font-size: 0.71rem;
+        color: #64748b;
+        line-height: 1.5;
+      }
+
+      .formula {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 18px;
+        font-family: "Courier New", monospace;
+        font-size: 0.79rem;
+        color: #3b82f6;
+        line-height: 2;
+      }
+
+      .formula .flabel {
+        font-family: "Inter", sans-serif;
+        font-size: 0.66rem;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: #94a3b8;
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      /* Table */
+      .mi-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.83rem;
+      }
+
+      .mi-table th {
+        padding: 8px 12px;
+        text-align: left;
+        font-size: 0.67rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #94a3b8;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .mi-table td {
+        padding: 11px 12px;
+        border-bottom: 1px solid #f1f5f9;
+        color: #374151;
+        vertical-align: top;
+        line-height: 1.5;
+      }
+
+      .mi-table tbody tr:last-child td {
+        border-bottom: none;
+      }
+      .mi-table tbody tr:hover td {
+        background: #f8fafc;
+      }
+
+      /* Badges */
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 5px;
+        font-size: 0.68rem;
+        font-weight: 500;
+        font-family: "Courier New", monospace;
+      }
+
+      .bd-blue {
+        background: #eff6ff;
+        color: #2563eb;
+      }
+      .bd-purple {
+        background: #f5f3ff;
+        color: #7c3aed;
+      }
+      .bd-green {
+        background: #f0fdf4;
+        color: #15803d;
+      }
+      .bd-teal {
+        background: #f0fdfa;
+        color: #0d9488;
+      }
+      .bd-amber {
+        background: #fffbeb;
+        color: #b45309;
+      }
+      .bd-red {
+        background: #fef2f2;
+        color: #dc2626;
+      }
+
+      /* Risk tiers */
+      .risk-cols {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .rcol {
+        border-radius: 10px;
+        padding: 20px 16px;
+        text-align: center;
+        border: 1px solid;
+      }
+
+      .rcol.low {
+        background: #f0fdf4;
+        border-color: #bbf7d0;
+      }
+      .rcol.medium {
+        background: #fffbeb;
+        border-color: #fde68a;
+      }
+      .rcol.high {
+        background: #fef2f2;
+        border-color: #fecaca;
+      }
+
+      .rcol .rico {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        margin: 0 auto 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+      }
+
+      .rcol.low .rico {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+      .rcol.medium .rico {
+        background: #fef9c3;
+        color: #d97706;
+      }
+      .rcol.high .rico {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+
+      .rcol h4 {
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      .rcol.low h4 {
+        color: #15803d;
+      }
+      .rcol.medium h4 {
+        color: #b45309;
+      }
+      .rcol.high h4 {
+        color: #dc2626;
+      }
+
+      .rcol .rrange {
+        font-family: "Poppins", sans-serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+
+      .rcol.low .rrange {
+        color: #16a34a;
+      }
+      .rcol.medium .rrange {
+        color: #d97706;
+      }
+      .rcol.high .rrange {
+        color: #dc2626;
+      }
+
+      .rcol .rdesc {
+        font-size: 0.72rem;
+        color: #64748b;
+        line-height: 1.55;
+      }
+
+      /* Tech grid */
+      .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+        gap: 10px;
+      }
+
+      .tech-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 12px 14px;
+      }
+
+      .tech-ico {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+      }
+
+      .tech-name {
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: #1e293b;
+      }
+
+      .tech-role {
+        font-size: 0.7rem;
+        color: #64748b;
+        margin-top: 1px;
+      }
+
+      /* Disclaimer */
+      .disclaimer {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-left: 3px solid #f59e0b;
+        border-radius: 10px;
+        padding: 16px 18px;
+        font-size: 0.81rem;
+        color: #78350f;
+        line-height: 1.65;
+      }
+
+      .disclaimer i {
+        color: #f59e0b;
+        margin-top: 2px;
+        flex-shrink: 0;
+      }
+
+      @media (max-width: 640px) {
+        .steps,
+        .weights,
+        .risk-cols {
+          grid-template-columns: 1fr;
+        }
+        .info-card {
+          padding: 20px 16px;
+        }
+      }
+
+      @media (min-width: 641px) and (max-width: 800px) {
+        .steps {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="nav-brand">
+        <i class="fa-solid fa-lungs nav-icon"></i>
+        <span>Lung AI Prognosis</span>
+      </div>
+      <div class="nav-links">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('prediction') }}">Prediction</a>
+        <a href="{{ url_for('accuracy') }}">Accuracy</a>
+        <a href="{{ url_for('data') }}">Dataset</a>
+        <a href="{{ url_for('more_info') }}" class="active">System Info</a>
+        <a href="{{ url_for('logout') }}" class="btn-logout">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </a>
+      </div>
+    </nav>
+
+    <!-- HEADER -->
+    <div class="page-header">
+      <h1>System Architecture</h1>
+      <p>
+        A multimodal deep learning pipeline fusing CT imaging, clinical
+        parameters, and genomic data for comprehensive lung cancer prognosis.
+      </p>
+    </div>
+
+    <div class="info-wrap">
+      <!-- 1. PIPELINE -->
+      <div class="info-card">
+        <h2>
+          <i class="fa-solid fa-diagram-project i-blue"></i>
+          End-to-end pipeline
+        </h2>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">Step 01</div>
+            <div class="step-ico i-blue">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+            <h4>CT scan upload</h4>
+            <p>PNG, JPG, or DICOM image accepted and stored server-side</p>
+          </div>
+          <div class="step">
+            <div class="step-num">Step 02</div>
+            <div class="step-ico i-purple">
+              <i class="fa-solid fa-brain"></i>
+            </div>
+            <h4>CT inference</h4>
+            <p>ResNet-50 binary + 4-class type classification with softmax</p>
+          </div>
+          <div class="step">
+            <div class="step-num">Step 03</div>
+            <div class="step-ico i-teal"><i class="fa-solid fa-eye"></i></div>
+            <h4>Grad-CAM</h4>
+            <p>Gradient-weighted attention heatmap for visual explainability</p>
+          </div>
+          <div class="step">
+            <div class="step-num">Step 04</div>
+            <div class="step-ico i-green">
+              <i class="fa-solid fa-file-medical"></i>
+            </div>
+            <h4>Clinical scoring</h4>
+            <p>Age bracket, disease stage, and smoking risk computation</p>
+          </div>
+          <div class="step">
+            <div class="step-num">Step 05</div>
+            <div class="step-ico i-amber"><i class="fa-solid fa-dna"></i></div>
+            <h4>Genomic data</h4>
+            <p>Optional microarray / expression CSV for additional weight</p>
+          </div>
+          <div class="step">
+            <div class="step-num">Step 06</div>
+            <div class="step-ico i-red">
+              <i class="fa-solid fa-chart-pie"></i>
+            </div>
+            <h4>Fusion output</h4>
+            <p>Weighted ensemble → risk tier, survival %, and confidence</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. MODELS -->
+      <div class="info-card">
+        <h2>
+          <i class="fa-solid fa-robot i-purple"></i>
+          Deep learning models
+        </h2>
+        <table class="mi-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Task</th>
+              <th>Architecture</th>
+              <th>Output</th>
+              <th>Classes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>CT Type model</strong></td>
+              <td>Cancer subtype classification</td>
+              <td><span class="badge bd-blue">ResNet-50 (CTModel)</span></td>
+              <td>Softmax probabilities</td>
+              <td>4 — Adeno, Large Cell, Normal, Squamous</td>
+            </tr>
+            <tr>
+              <td><strong>CT Binary model</strong></td>
+              <td>Cancer vs. Normal detection</td>
+              <td><span class="badge bd-blue">ResNet-50 (CTModel)</span></td>
+              <td>Cancer probability [0–1]</td>
+              <td>2 — Normal / Cancer</td>
+            </tr>
+            <tr>
+              <td><strong>Grad-CAM</strong></td>
+              <td>Visual explainability</td>
+              <td><span class="badge bd-teal">Gradient-weighted CAM</span></td>
+              <td>Heatmap overlay 224×224</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td><strong>Fusion pipeline</strong></td>
+              <td>Multimodal risk fusion</td>
+              <td><span class="badge bd-purple">Weighted ensemble</span></td>
+              <td>Risk level + survival %</td>
+              <td>3 — Low / Medium / High</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 3. FUSION WEIGHTS -->
+      <div class="info-card">
+        <h2>
+          <i class="fa-solid fa-scale-balanced i-teal"></i>
+          Fusion weight distribution
+        </h2>
+        <div class="weights">
+          <div class="wbox wb-blue">
+            <div class="pct">60%</div>
+            <div class="wname">
+              <i
+                class="fa-solid fa-x-ray"
+                style="font-size: 0.75rem; margin-right: 4px"
+              ></i
+              >CT imaging
+            </div>
+            <div class="wsub">
+              Dominant signal — cancer probability from the binary model
+            </div>
+          </div>
+          <div class="wbox wb-green">
+            <div class="pct">30%</div>
+            <div class="wname">
+              <i
+                class="fa-solid fa-file-medical"
+                style="font-size: 0.75rem; margin-right: 4px"
+              ></i
+              >Clinical data
+            </div>
+            <div class="wsub">
+              Age bracket, cancer stage (I–IV), and smoking status
+            </div>
+          </div>
+          <div class="wbox wb-purple">
+            <div class="pct">10%</div>
+            <div class="wname">
+              <i
+                class="fa-solid fa-dna"
+                style="font-size: 0.75rem; margin-right: 4px"
+              ></i
+              >Genomic data
+            </div>
+            <div class="wsub">
+              Optional — adds a penalty when a CSV is provided
+            </div>
+          </div>
+        </div>
+        <div class="formula">
+          <span class="flabel">Fusion formula</span>
+          fusion_score &nbsp;&nbsp;= (0.6 × ct_cancer_prob) + (0.3 ×
+          clinical_score) + (0.1 × genomic_score)<br />
+          survival &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 1.0 − fusion_score<br />
+          confidence &nbsp;&nbsp;&nbsp;= (type_conf × 0.7 + cancer_prob × 0.3) ^
+          0.75
+        </div>
+      </div>
+
+      <!-- 4. CLINICAL SCORING -->
+      <div class="info-card">
+        <h2>
+          <i class="fa-solid fa-stethoscope i-green"></i>
+          Clinical risk scoring
+        </h2>
+        <table class="mi-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Value</th>
+              <th>Score</th>
+              <th>Rationale</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td rowspan="3"><strong>Age</strong></td>
+              <td>≥ 65 years</td>
+              <td><span class="badge bd-red">+0.30</span></td>
+              <td>Highest age-related risk bracket</td>
+            </tr>
+            <tr>
+              <td>50 – 64 years</td>
+              <td><span class="badge bd-amber">+0.20</span></td>
+              <td>Intermediate risk bracket</td>
+            </tr>
+            <tr>
+              <td>&lt; 50 years</td>
+              <td><span class="badge bd-green">+0.10</span></td>
+              <td>Lower age-related risk</td>
+            </tr>
+            <tr>
+              <td><strong>Stage I</strong></td>
+              <td>Early localised</td>
+              <td><span class="badge bd-green">+0.10</span></td>
+              <td>Confined to lung — best prognosis</td>
+            </tr>
+            <tr>
+              <td><strong>Stage II</strong></td>
+              <td>Regional spread</td>
+              <td><span class="badge bd-amber">+0.30</span></td>
+              <td>Limited nodal involvement</td>
+            </tr>
+            <tr>
+              <td><strong>Stage III</strong></td>
+              <td>Extensive regional</td>
+              <td><span class="badge bd-amber">+0.60</span></td>
+              <td>Advanced locoregional disease</td>
+            </tr>
+            <tr>
+              <td><strong>Stage IV</strong></td>
+              <td>Distant metastasis</td>
+              <td><span class="badge bd-red">+0.90</span></td>
+              <td>Metastatic — poorest prognosis</td>
+            </tr>
+            <tr>
+              <td><strong>Smoking</strong></td>
+              <td>Current / Former</td>
+              <td><span class="badge bd-amber">+0.30</span></td>
+              <td>Primary lung cancer risk factor</td>
+            </tr>
+            <tr>
+              <td><strong>Smoking</strong></td>
+              <td>Never</td>
+              <td><span class="badge bd-green">+0.00</span></td>
+              <td>No smoking penalty applied</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size: 0.72rem; color: #94a3b8; margin-top: 12px">
+          All scores are clamped to [0.05, 0.95] before fusion to prevent
+          extreme edge outputs.
+        </p>
+      </div>
+
+      <!-- 5. RISK TIERS -->
+      <div class="info-card">
+        <h2>
+          <i class="fa-solid fa-gauge-high i-amber"></i>
+          Risk level thresholds
+        </h2>
+        <div class="risk-cols">
+          <div class="rcol low">
+            <div class="rico"><i class="fa-solid fa-shield-check"></i></div>
+            <h4>Low risk</h4>
+            <div class="rrange">0 – 30%</div>
+            <div class="rdesc">
+              Routine follow-up and healthy lifestyle advised. Likely normal
+              scan or very early stage.
+            </div>
+          </div>
+          <div class="rcol medium">
+            <div class="rico"><i class="fa-solid fa-bolt"></i></div>
+            <h4>Medium risk</h4>
+            <div class="rrange">30 – 60%</div>
+            <div class="rdesc">
+              Enhanced monitoring and specialist referral recommended.
+              Standard-plus care applies.
+            </div>
+          </div>
+          <div class="rcol high">
+            <div class="rico">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h4>High risk</h4>
+            <div class="rrange">60 – 100%</div>
+            <div class="rdesc">
+              Immediate oncologist consultation, biopsy, and PET/CT staging
+              strongly advised.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. CANCER SUBTYPES -->
+      <div class="info-card">
+        <h2>
+          <i class="fa-solid fa-microscope i-red"></i>
+          Detectable cancer subtypes
+        </h2>
+        <table class="mi-table">
+          <thead>
+            <tr>
+              <th>Class</th>
+              <th>Subtype</th>
+              <th>Prevalence</th>
+              <th>Key notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge bd-blue">Class 0</span></td>
+              <td><strong>Adenocarcinoma</strong></td>
+              <td>~40% of NSCLC</td>
+              <td>
+                Most common; peripheral; targetable EGFR / ALK mutations
+                frequent
+              </td>
+            </tr>
+            <tr>
+              <td><span class="badge bd-purple">Class 1</span></td>
+              <td><strong>Large cell carcinoma</strong></td>
+              <td>~10–15% of NSCLC</td>
+              <td>Undifferentiated; fast-growing; diagnosed by exclusion</td>
+            </tr>
+            <tr>
+              <td><span class="badge bd-green">Class 2</span></td>
+              <td><strong>Normal</strong></td>
+              <td>—</td>
+              <td>
+                No malignant findings; routine screening interval recommended
+              </td>
+            </tr>
+            <tr>
+              <td><span class="badge bd-amber">Class 3</span></td>
+              <td><strong>Squamous cell carcinoma</strong></td>
+              <td>~25–30% of NSCLC</td>
+              <td>
+                Centrally located; strongly associated with smoking history
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 7. TECH STACK -->
+      <div class="info-card">
+        <h2>
+          <i class="fa-solid fa-layer-group i-teal"></i>
+          Technology stack
+        </h2>
+        <div class="tech-grid">
+          <div class="tech-item">
+            <div class="tech-ico i-blue">
+              <i class="fa-brands fa-python"></i>
+            </div>
+            <div>
+              <div class="tech-name">Python 3.10+</div>
+              <div class="tech-role">Core language</div>
+            </div>
+          </div>
+          <div class="tech-item">
+            <div class="tech-ico i-red">
+              <i class="fa-solid fa-fire-flame-curved"></i>
+            </div>
+            <div>
+              <div class="tech-name">PyTorch</div>
+              <div class="tech-role">Deep learning framework</div>
+            </div>
+          </div>
+          <div class="tech-item">
+            <div class="tech-ico i-green">
+              <i class="fa-solid fa-flask"></i>
+            </div>
+            <div>
+              <div class="tech-name">Flask</div>
+              <div class="tech-role">Web application server</div>
+            </div>
+          </div>
+          <div class="tech-item">
+            <div class="tech-ico i-teal"><i class="fa-solid fa-image"></i></div>
+            <div>
+              <div class="tech-name">OpenCV + PIL</div>
+              <div class="tech-role">Image preprocessing</div>
+            </div>
+          </div>
+          <div class="tech-item">
+            <div class="tech-ico i-purple">
+              <i class="fa-solid fa-network-wired"></i>
+            </div>
+            <div>
+              <div class="tech-name">TorchVision</div>
+              <div class="tech-role">ResNet backbone + transforms</div>
+            </div>
+          </div>
+          <div class="tech-item">
+            <div class="tech-ico i-amber">
+              <i class="fa-solid fa-database"></i>
+            </div>
+            <div>
+              <div class="tech-name">SQLite</div>
+              <div class="tech-role">User authentication store</div>
+            </div>
+          </div>
+          <div class="tech-item">
+            <div class="tech-ico i-blue">
+              <i class="fa-solid fa-calculator"></i>
+            </div>
+            <div>
+              <div class="tech-name">NumPy</div>
+              <div class="tech-role">Numerical computation</div>
+            </div>
+          </div>
+          <div class="tech-item">
+            <div class="tech-ico i-red"><i class="fa-solid fa-lock"></i></div>
+            <div>
+              <div class="tech-name">Werkzeug</div>
+              <div class="tech-role">Password hashing + file utils</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DISCLAIMER -->
+      <div class="disclaimer">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <div>
+          <strong>Medical disclaimer:</strong> This system is a research
+          prototype intended to assist clinical decision-making and is not a
+          certified medical device. All predictions must be interpreted by a
+          qualified oncologist alongside a full diagnostic workup. Do not use as
+          a sole basis for diagnosis or treatment.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | Lung Cancer Prognosis AI</title>
+
+    <!-- Google Fonts for modern typography -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- FontAwesome for professional medical/tech icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Link to your CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='home.css') }}"
+    />
+  </head>
+  <body>
+    <!-- Background Animated Shapes for the High-Tech feel -->
+    <div class="bg-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="nav-brand">
+        <i class="fa-solid fa-lungs nav-icon"></i>
+        <span>Lung AI Prognosis</span>
+      </div>
+      <div class="nav-links">
+        <a href="{{ url_for('home') }}" class="active">Home</a>
+        <a href="{{ url_for('prediction') }}">Prediction</a>
+        <a href="{{ url_for('accuracy') }}">Accuracy</a>
+        <a href="{{ url_for('data') }}">Dataset</a>
+        <a href="/history">View History</a>
+        <a href="{{ url_for('more_info') }}">System Info</a>
+        <a href="{{ url_for('logout') }}" class="btn-logout"
+          ><i class="fa-solid fa-right-from-bracket"></i> Logout</a
+        >
+      </div>
+      <!-- Mobile Menu Toggle -->
+      <button class="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
+    </nav>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <main class="dashboard-container">
+      <!-- Welcome Hero Section -->
+      <header class="hero-section fade-in-up">
+        <div class="hero-badge">Final Year Project</div>
+        <h1 class="hero-title">
+          Welcome <span class="highlight">{{ user }}</span>
+        </h1>
+        <p class="hero-subtitle">
+          Advanced Multimodal Deep Learning System.<br />
+          Integrating CT scans, clinical parameters, and genomic data to predict
+          lung cancer prognosis risk with high precision.
+        </p>
+      </header>
+
+      <!-- Feature Cards Grid -->
+      <div class="cards-grid">
+        <!-- Card 1: Prediction -->
+        <div class="feature-card delay-1">
+          <div class="card-icon-wrapper blue">
+            <i class="fa-solid fa-microscope"></i>
+          </div>
+          <h3>Prognosis Prediction</h3>
+          <p>
+            Upload CT scans, clinical parameters, and genomic data to generate
+            AI-based lung cancer prognosis results.
+          </p>
+          <a href="{{ url_for('prediction') }}" class="card-btn btn-blue">
+            Start Prediction <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <!-- Card 2: Accuracy -->
+        <div class="feature-card delay-2">
+          <div class="card-icon-wrapper teal">
+            <i class="fa-solid fa-chart-line"></i>
+          </div>
+          <h3>Model Performance</h3>
+          <p>
+            View evaluation metrics of the AI models including Accuracy,
+            F1-score, ROC-AUC, and validation loss.
+          </p>
+          <a href="{{ url_for('accuracy') }}" class="card-btn btn-teal">
+            View Metrics <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <!-- Card 3: Dataset -->
+        <div class="feature-card delay-3">
+          <div class="card-icon-wrapper orange">
+            <i class="fa-solid fa-database"></i>
+          </div>
+          <h3>Dataset Information</h3>
+          <p>
+            Explore details about CT imaging datasets, clinical patient data,
+            and genomic gene expression datasets used for training.
+          </p>
+          <a href="{{ url_for('data') }}" class="card-btn btn-orange">
+            Explore Data <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <!-- Card 4: Architecture -->
+        <div class="feature-card delay-4">
+          <div class="card-icon-wrapper purple">
+            <i class="fa-solid fa-network-wired"></i>
+          </div>
+          <h3>System Architecture</h3>
+          <p>
+            Understand the deep learning architecture including CNN (ResNet),
+            MLP clinical model, and genomic autoencoder fusion.
+          </p>
+          <a href="{{ url_for('more_info') }}" class="card-btn btn-purple">
+            Learn More <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+      <p>AI Powered Lung Cancer Prognosis System &copy; 2026 | AJANYA K A</p>
+    </footer>
+  </body>
+</html>

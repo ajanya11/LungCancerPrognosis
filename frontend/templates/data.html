@@ -1,0 +1,180 @@
+{% extends "base.html" %} {% block title %}Dataset - Lung Cancer Prognosis
+System{% endblock %} {% block content %}
+
+<div class="hero-section text-center">
+  <h1 class="display-5 fw-bold text-primary">
+    <i class="fas fa-database"></i> Dataset Overview
+  </h1>
+  <p class="lead">
+    Multimodal dataset used for lung cancer prediction using CT imaging,
+    clinical data, and genomic features
+  </p>
+</div>
+
+<!-- ===================== CT TYPE ===================== -->
+<div class="card mt-4">
+  <div class="card-header bg-dark text-white">
+    <h5><i class="fas fa-brain me-2"></i> CT Type Dataset (4-Class)</h5>
+  </div>
+  <div class="card-body">
+    <p>
+      The CT Type dataset is used for multi-class classification of lung cancer
+      types.
+    </p>
+
+    <ul>
+      <li>Adenocarcinoma</li>
+      <li>Large Cell Carcinoma</li>
+      <li>Squamous Cell Carcinoma</li>
+      <li>Normal</li>
+    </ul>
+
+    <p>
+      Images are loaded from train, test, and validation folders and mapped to
+      numerical labels.
+    </p>
+  </div>
+</div>
+
+<!-- ===================== CT BINARY ===================== -->
+<div class="card mt-4">
+  <div class="card-header bg-secondary text-white">
+    <h5><i class="fas fa-exclamation-triangle me-2"></i> CT Binary Dataset</h5>
+  </div>
+  <div class="card-body">
+    <p>
+      The CT Binary dataset is used for cancer detection (Cancer vs Normal).
+    </p>
+
+    <ul>
+      <li>Label 0 → Normal</li>
+      <li>Label 1 → Cancer</li>
+    </ul>
+
+    <p>
+      This dataset combines multiple CT sources including chest CT scans and
+      IQ-OTHNCCD dataset.
+    </p>
+  </div>
+</div>
+
+<!-- ===================== CLINICAL ===================== -->
+<div class="card mt-4">
+  <div class="card-header bg-primary text-white">
+    <h5><i class="fas fa-user-md me-2"></i> Clinical Dataset</h5>
+  </div>
+  <div class="card-body">
+    <p>
+      The clinical dataset contains patient health and lifestyle information
+      used for prediction.
+    </p>
+
+    <ul>
+      <li>AGE</li>
+      <li>GENDER</li>
+      <li>SMOKING</li>
+      <li>YELLOW_FINGERS</li>
+      <li>ANXIETY</li>
+      <li>PEER_PRESSURE</li>
+      <li>CHRONIC_DISEASE</li>
+      <li>FATIGUE</li>
+      <li>ALLERGY</li>
+      <li>WHEEZING</li>
+      <li>ALCOHOL_CONSUMING</li>
+      <li>COUGHING</li>
+      <li>SHORTNESS_OF_BREATH</li>
+      <li>SWALLOWING_DIFFICULTY</li>
+      <li>CHEST_PAIN</li>
+    </ul>
+
+    <p>
+      Target variable:
+      <strong>LUNG_CANCER (YES / NO)</strong> → converted to binary (1 / 0)
+    </p>
+  </div>
+</div>
+
+<!-- ===================== GENOMIC ===================== -->
+<div class="card mt-4">
+  <div class="card-header bg-light">
+    <h5><i class="fas fa-dna me-2"></i> Genomic Dataset</h5>
+  </div>
+  <div class="card-body">
+    <p>The genomic dataset contains RNA sequencing gene expression data.</p>
+
+    <ul>
+      <li>Non-numeric columns are removed</li>
+      <li>Low variance genes are filtered</li>
+      <li>Missing values are filled using mean</li>
+      <li>Data is normalized using StandardScaler</li>
+    </ul>
+
+    <p>
+      The processed data is converted into tensor format for deep learning
+      models.
+    </p>
+  </div>
+</div>
+
+<!-- ===================== MULTIMODAL ===================== -->
+<div class="card mt-4 border-success">
+  <div class="card-header bg-success text-white">
+    <h5>
+      <i class="fas fa-project-diagram me-2"></i> Multimodal Fusion System
+    </h5>
+  </div>
+  <div class="card-body">
+    <p>
+      The system uses a multimodal deep learning pipeline that integrates CT
+      imaging, clinical data, and genomic features to generate a final lung
+      cancer prediction.
+    </p>
+
+    <h6 class="mt-3">Model Components:</h6>
+    <ul>
+      <li>
+        <strong>CT Model:</strong> A ResNet50-based deep learning model extracts
+        visual features from CT scans and performs both binary (Cancer vs
+        Normal) and multi-class classification.
+      </li>
+
+      <li>
+        <strong>Clinical Model:</strong> A fully connected neural network
+        processes patient features and generates a clinical risk score.
+      </li>
+
+      <li>
+        <strong>Genomic Model:</strong> A Variational Autoencoder (VAE) learns
+        latent representations of gene expression data and computes genomic
+        risk.
+      </li>
+    </ul>
+
+    <h6 class="mt-3">Fusion Strategy:</h6>
+    <ul>
+      <li>Outputs from CT, Clinical, and Genomic models are combined</li>
+      <li>
+        Weighted fusion prioritizes CT features while incorporating patient and
+        molecular data
+      </li>
+      <li>Dynamic weighting adjusts importance based on confidence levels</li>
+      <li>Rule-based and deep learning fusion methods are used together</li>
+    </ul>
+
+    <h6 class="mt-3">Final Prediction:</h6>
+    <ul>
+      <li>Binary Output → Cancer / Normal</li>
+      <li>Cancer Type → Adenocarcinoma / Squamous / Large Cell</li>
+      <li>Risk Level → Low / Medium / High</li>
+      <li>Survival Probability estimation</li>
+      <li>Clinical suggestions for treatment and follow-up</li>
+    </ul>
+
+    <div class="alert alert-info">
+      The final decision is generated using a fusion pipeline that combines all
+      modalities into a single robust prediction.
+    </div>
+  </div>
+</div>
+
+{% endblock %}

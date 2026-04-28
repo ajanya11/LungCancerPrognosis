@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Login | Lung Cancer Prognosis</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <!-- LEFT PANEL -->
+      <div class="left-panel">
+        <div class="left-content">
+          <h2>Lung Cancer Prognosis System</h2>
+          <p>
+            Only pay what you should. We are here<br />to keep things
+            transparent.
+          </p>
+          <img
+            src="{{ url_for('static', filename='doctor.png') }}"
+            alt="Doctors"
+          />
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="right-panel">
+        <div class="form-box">
+          <h2>LOGIN</h2>
+
+          <form method="POST">
+            <label>Username</label>
+            <input type="text" name="username" required />
+
+            <label>Password</label>
+            <input type="password" name="password" required />
+
+            <button type="submit">Login</button>
+          </form>
+
+          <p class="bottom-text">
+            Don’t have an account?
+            <a href="{{ url_for('signup') }}">Sign up</a>
+          </p>
+
+          {% with messages = get_flashed_messages() %} {% if messages %}
+          <p class="error">{{ messages[0] }}</p>
+          {% endif %} {% endwith %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
