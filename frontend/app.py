@@ -19,10 +19,14 @@ app.secret_key = "supersecretkey"
 # =====================================================
 # PATHS
 # =====================================================
-BASE_DIR      = os.path.abspath(os.path.dirname(__file__))
-UPLOAD_FOLDER = os.path.join(BASE_DIR, "frontend", "static", "uploads")
-GRADCAM_FOLDER = os.path.join(BASE_DIR, "frontend", "static", "gradcam")
-STATIC_ROOT   = os.path.join(BASE_DIR, "frontend", "static")
+# app.py already lives inside the "frontend" folder, so BASE_DIR IS the
+# frontend directory. Do NOT append "frontend" again below — that was
+# creating a phantom frontend/frontend/static/... folder that Flask never
+# serves, which is why uploaded images / Grad-CAM heatmaps looked broken.
+BASE_DIR       = os.path.abspath(os.path.dirname(__file__))
+UPLOAD_FOLDER  = os.path.join(BASE_DIR, "static", "uploads")
+GRADCAM_FOLDER = os.path.join(BASE_DIR, "static", "gradcam")
+STATIC_ROOT    = os.path.join(BASE_DIR, "static")
 os.makedirs(UPLOAD_FOLDER,  exist_ok=True)
 os.makedirs(GRADCAM_FOLDER, exist_ok=True)
 DB_NAME = os.path.join(BASE_DIR, "users.db")
@@ -32,6 +36,7 @@ prediction_store = {}
 # =====================================================
 # PROJECT ROOT ON PATH
 # =====================================================
+# fusion/ and utils/ live one level above the frontend/ folder.
 BASE_PROJECT = os.path.abspath(os.path.join(BASE_DIR, ".."))
 if BASE_PROJECT not in sys.path:
     sys.path.append(BASE_PROJECT)
@@ -122,13 +127,9 @@ def _url_to_abs(web_url: str) -> Optional[str]:
     # Strip leading slash, replace forward-slashes with OS separator
     rel = web_url.lstrip("/").replace("/", os.sep)
 
-    candidate = os.path.join(BASE_DIR, "frontend", rel)
+    candidate = os.path.join(BASE_DIR, rel)
     if os.path.isfile(candidate):
         return candidate
-
-    candidate2 = os.path.join(BASE_DIR, rel)
-    if os.path.isfile(candidate2):
-        return candidate2
 
     print(f"[_url_to_abs] MISS  url={web_url!r}")
     return None
@@ -739,4 +740,10 @@ def download_report(prediction_id):
 # =====================================================
 if __name__ == "__main__":
     print("Server running...")
-    app.run(debug=True)
+    # use_reloader=False: prevents the dev-server watchdog from restarting
+    # mid-request when an uploaded CT image / gradcam file is written into
+    # static/ (which it watches) — that restart is what caused
+    # ERR_CONNECTION_RESET on /prediction.
+    # threaded=True: lets the server handle more than one request at a time,
+    # useful while the CT inference/model call is running.
+    app.run(debug=True, use_reloader=False, threaded=True)
